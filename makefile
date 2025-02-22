@@ -65,7 +65,7 @@ tidy:
 build: sales
 
 sales:
-	docker build \
+	podman build \
 		-f zarf/docker/dockerfile.sales \
 		-t $(SALES_IMAGE) \
 		--build-arg BUILD_REF=$(VERSION) \
