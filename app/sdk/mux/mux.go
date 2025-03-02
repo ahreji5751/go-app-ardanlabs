@@ -2,12 +2,13 @@ package mux
 
 import (
 	"github.com/ardanlabs/service/app/domain/checkapp"
-	"net/http"
+	"github.com/ardanlabs/service/foundation/web"
+	"os"
 )
 
 // WebAPI constructs a http.Handler with all application routes bound.
-func WebAPI() *http.ServeMux {
-	mux := http.NewServeMux()
+func WebAPI(shutdown chan os.Signal) *web.App {
+	mux := web.NewApp(shutdown)
 
 	chekapp.Routes(mux)
 
