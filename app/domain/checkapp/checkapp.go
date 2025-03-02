@@ -2,7 +2,7 @@ package chekapp
 
 import (
 	"context"
-	"encoding/json"
+	"github.com/ardanlabs/service/foundation/web"
 	"net/http"
 )
 
@@ -13,7 +13,7 @@ func liveness(ctx context.Context, w http.ResponseWriter, r *http.Request) error
 		Status: "Ok",
 	}
 
-	return json.NewEncoder(w).Encode(status)
+	return web.Respond(ctx, w, status, http.StatusOK)
 }
 
 func readiness(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
@@ -23,5 +23,5 @@ func readiness(ctx context.Context, w http.ResponseWriter, r *http.Request) erro
 		Status: "Ok",
 	}
 
-	return json.NewEncoder(w).Encode(status)
+	return web.Respond(ctx, w, status, http.StatusOK)
 }
