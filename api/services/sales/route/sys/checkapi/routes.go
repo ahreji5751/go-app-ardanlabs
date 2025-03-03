@@ -1,4 +1,4 @@
-package chekapp
+package checkapi
 
 import (
 	"github.com/ardanlabs/service/foundation/web"

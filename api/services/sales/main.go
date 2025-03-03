@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/ardanlabs/conf/v3"
+	"github.com/ardanlabs/service/api/services/sales/mux"
 	"github.com/ardanlabs/service/app/sdk/debug"
-	"github.com/ardanlabs/service/app/sdk/mux"
 	"github.com/ardanlabs/service/foundation/logger"
 )
 

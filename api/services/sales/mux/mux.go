@@ -1,7 +1,7 @@
 package mux
 
 import (
-	"github.com/ardanlabs/service/app/domain/checkapp"
+	"github.com/ardanlabs/service/api/services/sales/route/sys/checkapi"
 	"github.com/ardanlabs/service/foundation/web"
 	"os"
 )
@@ -10,7 +10,7 @@ import (
 func WebAPI(shutdown chan os.Signal) *web.App {
 	mux := web.NewApp(shutdown)
 
-	chekapp.Routes(mux)
+	checkapi.Routes(mux)
 
 	return mux
 }
