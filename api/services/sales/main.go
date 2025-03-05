@@ -16,6 +16,7 @@ import (
 	"github.com/ardanlabs/service/api/services/sales/mux"
 	"github.com/ardanlabs/service/app/sdk/debug"
 	"github.com/ardanlabs/service/foundation/logger"
+	"github.com/ardanlabs/service/foundation/web"
 )
 
 var build = "develop"
@@ -30,7 +31,7 @@ func main() {
 	}
 
 	traceIDFn := func(ctx context.Context) string {
-		return "" //otel.GetTraceID(ctx)
+		return web.GetTraceID(ctx)
 	}
 
 	log = logger.NewWithEvents(os.Stdout, logger.LevelInfo, "SALES", traceIDFn, events)
