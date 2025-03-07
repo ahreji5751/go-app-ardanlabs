@@ -2,7 +2,6 @@ package web
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -12,14 +11,18 @@ import (
 
 type Handler func(ctx context.Context, w http.ResponseWriter, r *http.Request) error
 
+type Logger func(ctx context.Context, msg string, v ...any)
+
 type App struct {
 	*http.ServeMux
 	shutdown chan os.Signal
 	mv       []MidHandler
+	log      Logger
 }
 
-func NewApp(shutdown chan os.Signal, mv ...MidHandler) *App {
+func NewApp(log Logger, shutdown chan os.Signal, mv ...MidHandler) *App {
 	return &App{
+		log:      log,
 		ServeMux: http.NewServeMux(),
 		shutdown: shutdown,
 		mv:       mv,
@@ -37,7 +40,7 @@ func (a *App) HandleFunc(pattern string, handler Handler, mv ...MidHandler) {
 		ctx := setValues(r.Context(), &v)
 
 		if err := handler(ctx, w, r); err != nil {
-			fmt.Println(err)
+			a.log(ctx, "web", "ERROR", err)
 			return
 		}
 	}
