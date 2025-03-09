@@ -29,9 +29,12 @@ func NewApp(log Logger, shutdown chan os.Signal, mv ...MidHandler) *App {
 	}
 }
 
-func (a *App) HandleFunc(pattern string, handler Handler, mv ...MidHandler) {
-	handler = wrapMiddleware(mv, handler)
-	handler = wrapMiddleware(a.mv, handler)
+func (a *App) HandleFunc(pattern string, withMiddleware bool, handler Handler, mv ...MidHandler) {
+	if withMiddleware {
+		handler = wrapMiddleware(mv, handler)
+		handler = wrapMiddleware(a.mv, handler)
+	}
+
 	h := func(w http.ResponseWriter, r *http.Request) {
 		v := Values{
 			TraceID: uuid.NewString(),

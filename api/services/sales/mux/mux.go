@@ -14,7 +14,7 @@ func WebAPI(log *logger.Logger, shutdown chan os.Signal) *web.App {
 	loggerFn := func(ctx context.Context, msg string, v ...any) {
 		log.Info(ctx, msg, v...)
 	}
-	mux := web.NewApp(loggerFn, shutdown, mid.Logger(log), mid.Errors(log), mid.Panics(log))
+	mux := web.NewApp(loggerFn, shutdown, mid.Logger(log), mid.Errors(log), mid.Metrics(), mid.Panics())
 
 	checkapi.Routes(mux)
 
