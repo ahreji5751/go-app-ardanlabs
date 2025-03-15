@@ -51,6 +51,9 @@ curl-test-error:
 curl-test-panic:
 	curl -il -X GET http://localhost:3000/test-panic
 
+admin:
+	go run api/tooling/admin/commands/genkey.go
+
 # ==============================================================================
 # Running from within k8s/kind
 
