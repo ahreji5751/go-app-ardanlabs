@@ -54,6 +54,14 @@ curl-test-panic:
 admin:
 	go run api/tooling/admin/genkey.go
 
+#admin token
+#export TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjU0YmIyMTY1LTcxZTEtNDFhNi1hZjNlLTdkYTRhMGUxZTJjMSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzZXJ2aWNlIHByb2plY3QiLCJzdWIiOiIyMzFjMGExZS02NjRmLTRiMmMtYThhOS1mM2ZiYWE5YThiZDEiLCJleHAiOjE3NzQxOTg0NTUsImlhdCI6MTc0MjY2MjQ1NSwiUm9sZXMiOlsiQURNSU4iXX0.AXZVVM329HJXdN2bNbaUNG2bynRQNYhTSedzmv7bAgeNDEusBJwDwZI4ZpIEZ0ge6--DNkqsuHhZaQQ5GN2FytJduyogK3nVbVGuLhXh9ALNhPfnyYfcByWTp2tVWKS0uEunpCERuDTK6hLOxSZQ2akQK4_RAADENi90daR49fj8cgJQR-HgcODhLe1Z4fJrc6iyHxXX9jjI2SLaBjocV1DWeZ2YYu5WqlSSc9vI7gRXh3RFUc53Jm3rXVTPKupWxiZTOL1YbDCpP26utFPrW7opbukHIN-BN-hXrnaiESUAvdtL90hqUA73wIg0WVPiG6d39yBLcPVzrrNKvJnX2g
+#user token
+#export TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjU0YmIyMTY1LTcxZTEtNDFhNi1hZjNlLTdkYTRhMGUxZTJjMSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzZXJ2aWNlIHByb2plY3QiLCJzdWIiOiIyMzFjMGExZS02NjRmLTRiMmMtYThhOS1mM2ZiYWE5YThiZDEiLCJleHAiOjE3NzQyMDMwNjksImlhdCI6MTc0MjY2NzA2OSwiUm9sZXMiOlsiVVNFUiJdfQ.mVLlZV3iLmTAb3OTWCjX8e3QTDgU5CiTo_LItVykEdlwEOMWZYUkZfnYxeEIzn4dOUrgMdHuGsSQ7VgbiLV5G8O94U-8s6xI1dc2_HuCg8KzZN2J2XAS_t2sSiOg4orMIkkw1Fxjp3aaAhcKCOSVd8LG-cKvSbbbFyRxGcQ6l169njva0-sv3lFQ9BYk4L6FzFaFd44c0I2-MCYjoT5-1AoLFacb5NqPPSRWsbEUCPAV6DifhIl_TpduZkiPMioI5q5qKHYj-DhMJFf-W6B3YlVrf5rbw1e0WXvTqlPkHmX6csD9JyvJKMAsoekQJxZPZEEA5rOLdt-fIkyCDOLGxA
+curl-test-auth:
+	curl -il \
+	-H "Authorization: Bearer ${TOKEN}" "http://localhost:3000/test-auth"
+
 # ==============================================================================
 # Running from within k8s/kind
 
@@ -133,3 +141,23 @@ sales:
 		--build-arg BUILD_REF=$(VERSION) \
 		--build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
 		.
+
+# ==============================================================================
+# Running tests within the local computer
+
+test-r:
+	CGO_ENABLED=1 go test -race -count=1 ./...
+
+test-only:
+	CGO_ENABLED=0 go test -count=1 ./...
+
+lint:
+	CGO_ENABLED=0 go vet ./...
+	staticcheck -checks=all ./...
+
+vuln-check:
+	govulncheck ./...
+
+test: test-only lint vuln-check
+
+test-race: test-r lint vuln-check
