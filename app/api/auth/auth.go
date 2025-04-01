@@ -43,7 +43,7 @@ type Auth struct {
 	keyLookup KeyLookup
 	method    jwt.SigningMethod
 	parser    *jwt.Parser
-	issuer    string
+	Issuer    string
 }
 
 func New(cfg Config) (*Auth, error) {
@@ -51,7 +51,7 @@ func New(cfg Config) (*Auth, error) {
 		keyLookup: cfg.KeyLookup,
 		method:    jwt.GetSigningMethod(jwt.SigningMethodRS256.Name),
 		parser:    jwt.NewParser(jwt.WithValidMethods([]string{jwt.SigningMethodRS256.Name})),
-		issuer:    cfg.Issuer,
+		Issuer:    cfg.Issuer,
 	}
 
 	return &a, nil
@@ -109,7 +109,7 @@ func (a *Auth) Authenticate(ctx context.Context, bearerToken string) (Claims, er
 	input := map[string]any{
 		"Key":   pem,
 		"Token": parts[1],
-		"ISS":   a.issuer,
+		"ISS":   a.Issuer,
 	}
 
 	if err := a.opaPolicyEvaluation(ctx, regoAuthentication, RuleAuthenticate, input); err != nil {
