@@ -8,10 +8,24 @@ import (
 	"time"
 
 	"github.com/ardanlabs/service/app/api/auth"
+	"github.com/ardanlabs/service/app/api/authclient"
 	"github.com/ardanlabs/service/app/api/errs"
+	"github.com/ardanlabs/service/foundation/logger"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 )
+
+func Authenticate(ctx context.Context, log *logger.Logger, client *authclient.Client, authorization string, handler Handler) error {
+	resp, err := client.Authenticate(ctx, authorization)
+	if err != nil {
+		return errs.New(errs.Unauthenticated, err)
+	}
+
+	ctx = setUserID(ctx, resp.UserID)
+	ctx = setClaims(ctx, resp.Claims)
+
+	return handler(ctx)
+}
 
 func Bearer(ctx context.Context, ath *auth.Auth, authorization string, handler Handler) error {
 	claims, err := ath.Authenticate(ctx, authorization)

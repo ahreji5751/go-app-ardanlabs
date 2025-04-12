@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/ardanlabs/service/app/api/auth"
+	"github.com/ardanlabs/service/app/api/authclient"
 	"github.com/ardanlabs/service/app/api/errs"
 	"github.com/ardanlabs/service/app/api/mid"
 	"github.com/ardanlabs/service/foundation/web"
-	"github.com/google/uuid"
 )
 
 type api struct {
@@ -49,10 +49,7 @@ func (api *api) authenticate(ctx context.Context, w http.ResponseWriter, r *http
 		return errs.New(errs.Unauthenticated, err)
 	}
 
-	resp := struct {
-		UserID uuid.UUID
-		Claims auth.Claims
-	}{
+	resp := authclient.AuthenticateResp{
 		UserID: userID,
 		Claims: mid.GetClaims(ctx),
 	}
@@ -61,11 +58,7 @@ func (api *api) authenticate(ctx context.Context, w http.ResponseWriter, r *http
 }
 
 func (api *api) authorize(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	var ath struct {
-		Claims auth.Claims
-		UserID uuid.UUID
-		Rule   string
-	}
+	var ath authclient.Authorize
 	if err := web.Decode(r, &ath); err != nil {
 		return errs.New(errs.FailedPrecondition, err)
 	}

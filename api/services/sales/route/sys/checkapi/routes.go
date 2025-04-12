@@ -3,12 +3,14 @@ package checkapi
 import (
 	"github.com/ardanlabs/service/api/services/api/mid"
 	"github.com/ardanlabs/service/app/api/auth"
+	"github.com/ardanlabs/service/app/api/authclient"
+	"github.com/ardanlabs/service/foundation/logger"
 	"github.com/ardanlabs/service/foundation/web"
 )
 
-func Routes(app *web.App, ath *auth.Auth) {
-	authenticate := mid.Bearer(ath)
-	authorizeAdmin := mid.Authorize(ath, auth.RuleAdminOnly)
+func Routes(app *web.App, log *logger.Logger, authClient *authclient.Client) {
+	authenticate := mid.Authenticate(log, authClient)
+	authorizeAdmin := mid.Authorize(log, authClient, auth.RuleAdminOnly)
 
 	app.HandleFunc("GET /liveness", false, liveness)
 	app.HandleFunc("GET /readiness", false, readiness)
