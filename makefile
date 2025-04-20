@@ -7,7 +7,7 @@ SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 GOLANG          := golang:1.24
 ALPINE          := alpine:3.21
 KIND            := kindest/node:v1.32.0
-POSTGRES        := postgres:17.2
+POSTGRES        := postgres:16.2
 GRAFANA         := grafana/grafana:11.4.0
 PROMETHEUS      := prom/prometheus:v3.0.0
 TEMPO           := grafana/tempo:2.6.0
@@ -81,6 +81,8 @@ dev-up:
 
 	kubectl wait --timeout=120s --namespace=local-path-storage --for=condition=Available deployment/local-path-provisioner
 
+	kind load image-archive --name $(KIND_CLUSTER) <(podman save $(POSTGRES))
+
 dev-down:
 	kind delete cluster --name $(KIND_CLUSTER)
 
@@ -99,6 +101,9 @@ dev-load:
 	kind load image-archive --name $(KIND_CLUSTER) <(podman save $(AUTH_IMAGE))
 
 dev-apply:
+	kustomize build zarf/k8s/dev/database | kubectl apply -f -
+	kubectl rollout status --namespace=$(NAMESPACE) --watch --timeout=120s sts/database
+
 	kustomize build zarf/k8s/dev/auth | kubectl apply -f -
 	kubectl wait pods --namespace=$(NAMESPACE) --selector app=$(AUTH_APP) --timeout=120s --for=condition=Ready
 
